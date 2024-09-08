@@ -8,9 +8,44 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
-
+import java.util.ArrayList;
 
 public class Client {
+
+    public static ArrayList<String> countries = new ArrayList<>();
+
+    public static void fillCountriesList(){
+        countries.add("Afghanistan");
+        countries.add("Albania");
+        countries.add("Algeria");
+        countries.add("Andorra");
+        countries.add("Angola");
+        countries.add("Antigua and Barbuda");
+        countries.add("Argentina");
+        countries.add("Armenia");
+        countries.add("Australia");
+        countries.add("Austria");
+        countries.add("Azerbaijan");
+        countries.add("Bahamas");
+        countries.add("Bahrain");
+        countries.add("Bangladesh");
+        countries.add("Barbados");
+        countries.add("Belarus");
+        countries.add("Belgium");
+        countries.add("Belize");
+        countries.add("Benin");
+        countries.add("Bhutan");
+        countries.add("Bolivia");
+        countries.add("Bosnia and Herzegovina");
+        countries.add("Botswana");
+        countries.add("Brazil");
+        countries.add("Brunei");
+        countries.add("Bulgaria");
+        countries.add("Burkina Faso");
+        countries.add("Burundi");
+        countries.add("Cabo Verde");
+        countries.add("Cambodia");
+    }
     public static void main(String[] args) {
         //int port  = Integer.valueOf(args[0]);
         //String host = args[1];
@@ -23,6 +58,7 @@ public class Client {
         ) {
             //out.println("HELLO");
             //System.out.println(in.readLine());
+            fillCountriesList();
             boolean runClient = true;
             while(runClient){
                 //
@@ -35,21 +71,49 @@ public class Client {
                 String input = scanner.nextLine();
                 if(input.equals("0")){
                     System.out.println("Input a country");
+
                     String country = scanner.nextLine();
-                    out.println("0/" + country);
-                    System.out.println(in.readLine());
+                    int countryNum = countries.indexOf(country);
+                    if(countryNum != -1){
+                        out.println("0" + countryNum);
+                        String city = in.readLine();
+                        System.out.println("The capitol city of " + country + " is " + city);
+                    }else{
+                        System.out.println(country + " is not on the list of countries. Try again.");
+                    }
+                    
                 }else if(input.equals("1")){
                     System.out.println("Input a country");
                     String country = scanner.nextLine();
-                    out.println("1/" + country);
-                    System.out.println(in.readLine());
+                    int countryNum = countries.indexOf(country);
+                    if(countryNum != -1){
+                        out.println("1" + countryNum);
+                        String population = in.readLine();
+                        System.out.println("The population of " + country + " is " + population);
+                    }else{
+                        System.out.println(country + " is not on the list of countries. Try again.");
+                    }
+                    
                 }else if(input.equals("2")){
                     System.out.println("Input a country");
                     String country = scanner.nextLine();
                     System.out.println("Input the capitol city of " + country);
                     String capitol = scanner.nextLine();
-                    out.println("2/" + country + "/" + capitol);
-                    System.out.println(in.readLine());
+                    if(countries.indexOf(country) == -1){
+                        out.println("2" + country + "/" + capitol);
+                        countries.add(country);
+                        String done  = in.readLine();
+                        if( done.equals("1")){
+                            System.out.println(country + " and " + capitol + " have been added");
+                        }else{
+                            System.out.println(capitol + " already exists. Try again");
+                            System.out.println(done);
+                        } 
+                    }else{
+                        System.out.println(capitol + " already exists. Try again");
+                    }
+                    
+                    
                 }else if(input.equals("3")){
                     runClient = false;
                     System.out.println("Goodbye :)");

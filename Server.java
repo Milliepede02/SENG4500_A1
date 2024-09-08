@@ -11,10 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.net.ServerSocket;
 import java.util.Random;
-
+import java.util.ArrayList;
 
 public class Server {
     private static Map<String,String> capitols = new HashMap<>();
+    private static ArrayList<String> countries = new ArrayList<>();
 
     //add data into map
     public static void setMap(){
@@ -49,6 +50,37 @@ public class Server {
         capitols.put("Burundi","Gitega");
         capitols.put("Cabo Verde","Praia");
         capitols.put("Cambodia","Phnom Penh");
+
+        countries.add("Afghanistan");
+        countries.add("Albania");
+        countries.add("Algeria");
+        countries.add("Andorra");
+        countries.add("Angola");
+        countries.add("Antigua and Barbuda");
+        countries.add("Argentina");
+        countries.add("Armenia");
+        countries.add("Australia");
+        countries.add("Austria");
+        countries.add("Azerbaijan");
+        countries.add("Bahamas");
+        countries.add("Bahrain");
+        countries.add("Bangladesh");
+        countries.add("Barbados");
+        countries.add("Belarus");
+        countries.add("Belgium");
+        countries.add("Belize");
+        countries.add("Benin");
+        countries.add("Bhutan");
+        countries.add("Bolivia");
+        countries.add("Bosnia and Herzegovina");
+        countries.add("Botswana");
+        countries.add("Brazil");
+        countries.add("Brunei");
+        countries.add("Bulgaria");
+        countries.add("Burkina Faso");
+        countries.add("Burundi");
+        countries.add("Cabo Verde");
+        countries.add("Cambodia");
     }
 
     //get the capitol of a given country
@@ -56,7 +88,7 @@ public class Server {
         String capitol = capitols.get(country);;
  
         if(capitol == null){
-            capitol = country + " is not in the list of countries.";
+            capitol = "0";
         }
         
         return capitol;
@@ -64,13 +96,16 @@ public class Server {
 
     //generate  random population
     public static String getPopulation(String country){
+        System.out.println("population test " + country);
+        System.out.println(capitols.get(country));
         if(capitols.get(country) == null){
-            return country + " is not in the list of countries";
+            return "0";
         }
         Random rand = new Random();
         int population = 3375851;
         int mulitplier = rand.nextInt(10) + 1;
         population *= mulitplier;
+        System.out.println(population);
         return Integer.toString(population);
     }
     
@@ -100,50 +135,61 @@ public class Server {
             System.out.println("CONNECTION OPEN");
             String msg = "";
             msg = in.readLine();
-            while (msg.contains("0/")|| msg.contains("1/") || msg.contains("2/")){
+            while (msg.startsWith("0")|| msg.startsWith("1") || msg.startsWith("2")){
 
                 // Wait till a proper protocol is sent
                 System.out.format("CLIENT: %s\n", msg);
                 //testing
                 System.out.println("msg = " + msg);
                 //split msg and find what function is being called
-                String [] msgArr = msg.split("/");
                 
-                int function = Integer.valueOf(msgArr[0]);
+                //break up the msg into the function and the input
+                int function = Integer.valueOf(msg.substring(0,1));
                 
-                String country = msgArr[1];
+                String country = msg.substring(1);
+                
 
 
                 if(function == 0){
+                    country = countries.get(Integer.valueOf(country));
                     String capitol = getCapitol(country);
-                    if(capitol.contains("is not in the list of countries")){
-                        out.println(capitol);
+                    if(capitol.equals("0")){
+                        out.println(0);
                     }else{
-                        out.println("The capitol of " + country + " is " + capitol);
+                        out.println(capitol);
                     }
                 
                 }else if(function == 1){
+                    country = countries.get(Integer.valueOf(country));
                     String population = getPopulation(country);
 
-                    if(population.contains("is not in the list of countries")){
-                        out.println(population);
+                    if(population.equals("0")){
+                        out.println(0);
                     }else{
-                        out.println("The population of " + country + " is " + population);
+                        out.println(population);
                     }
                     
                 }else if(function == 2){
-                    String capitol = msgArr[2];
+                    //spilt the country and the capitol city
+                    String msgArr[] = country.split("/");
+                    country = msgArr[0];
+                    String capitol = msgArr[1];
+                    //add to map
                     boolean added = addCapitol(country, capitol);
                     if(added){
-                        out.println(country + " and  " + capitol + " have been added");
+                        countries.add(capitol);
+                        out.println(1);
                     }else{
-                        out.println(country + " was already listed");
+                        out.println(0);
                     }
 
                 }else{
-                    out.println("There is no function for " + function  + " on the server");
+                    out.println("Error 404");
                 }
                 msg = in.readLine();
+                if(msg == null){
+                    break;
+                }
             }
         } catch (Exception e) { 
             e.printStackTrace();
