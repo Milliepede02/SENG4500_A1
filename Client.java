@@ -14,6 +14,7 @@ public class Client {
 
     public static ArrayList<String> countries = new ArrayList<>();
 
+    //fill the Array with a list of countries
     public static void fillCountriesList(){
         countries.add("Afghanistan");
         countries.add("Albania");
@@ -47,81 +48,81 @@ public class Client {
         countries.add("Cambodia");
     }
     public static void main(String[] args) {
-        //int port  = Integer.valueOf(args[0]);
-        //String host = args[1];
+        int port  = Integer.valueOf(args[0]);
+        String host = args[1];
         try (
-            //TODO: let port and host be inputted on command line
-            Socket s = new Socket("127.0.0.1", 4500);
+            //connect to the server
+            Socket s = new Socket(host, port);
             BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
             PrintWriter out = new PrintWriter(s.getOutputStream(), true);
             Scanner scanner = new Scanner(System.in);
         ) {
-            //out.println("HELLO");
-            //System.out.println(in.readLine());
             fillCountriesList();
+            //Lets the user runf functions
             boolean runClient = true;
             while(runClient){
-                //
+                //output to user
                 System.out.println("Enter one of the following:");
-                System.out.println("0 - To get the capitol city of a country");
+                System.out.println("0 - To get the capital city of a country");
                 System.out.println("1 - To get the population of a country");
-                System.out.println("2 - To enter a new country and capitol city");
+                System.out.println("2 - To enter a new country and capital city");
                 System.out.println("3 - To end the program");
 
+                //get and run frunctions
                 String input = scanner.nextLine();
-                if(input.equals("0")){
+                if(input.equals("0")){ // get a capital city
                     System.out.println("Input a country");
 
                     String country = scanner.nextLine();
                     int countryNum = countries.indexOf(country);
-                    if(countryNum != -1){
+                    if(countryNum != -1){//if country is in the list
                         out.println("0" + countryNum);
                         String city = in.readLine();
-                        System.out.println("The capitol city of " + country + " is " + city);
-                    }else{
+                        System.out.println("The capital city of " + country + " is " + city);
+                    }else{ //if country is not in the list
                         System.out.println(country + " is not on the list of countries. Try again.");
                     }
                     
-                }else if(input.equals("1")){
+                }else if(input.equals("1")){ //get the population
                     System.out.println("Input a country");
                     String country = scanner.nextLine();
                     int countryNum = countries.indexOf(country);
-                    if(countryNum != -1){
+                    if(countryNum != -1){ //if country is in the list
                         out.println("1" + countryNum);
                         String population = in.readLine();
                         System.out.println("The population of " + country + " is " + population);
-                    }else{
+                    }else{ //if country is not in the list
                         System.out.println(country + " is not on the list of countries. Try again.");
                     }
                     
-                }else if(input.equals("2")){
+                }else if(input.equals("2")){//input a new country and capital city
                     System.out.println("Input a country");
                     String country = scanner.nextLine();
-                    System.out.println("Input the capitol city of " + country);
-                    String capitol = scanner.nextLine();
-                    if(countries.indexOf(country) == -1){
-                        out.println("2" + country + "/" + capitol);
+                    System.out.println("Input the capital city of " + country);
+                    String capital = scanner.nextLine();
+                    if(countries.indexOf(country) == -1){//if country is not in the list
+                        out.println("2" + country + "/" + capital);
                         countries.add(country);
                         String done  = in.readLine();
                         if( done.equals("1")){
-                            System.out.println(country + " and " + capitol + " have been added");
-                        }else{
-                            System.out.println(capitol + " already exists. Try again");
+                            System.out.println(country + " and " + capital + " have been added");
+                        }else{//if country was in the list (o the server side)
+                            System.out.println(capital + " already exists. Try again");
                             System.out.println(done);
                         } 
-                    }else{
-                        System.out.println(capitol + " already exists. Try again");
+                    }else{//if country was in the list (n the client side)
+                        System.out.println(country + " already exists. Try again");
                     }
                     
                     
-                }else if(input.equals("3")){
+                }else if(input.equals("3")){//quit client program
                     runClient = false;
                     System.out.println("Goodbye :)");
-                }else{
+                }else{//if an input was incorrect
                     System.out.println("Incorrect input, try again");
                 }
             }
-        } catch (Exception e) {  // You should have some better exception handling
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

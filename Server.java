@@ -14,42 +14,42 @@ import java.util.Random;
 import java.util.ArrayList;
 
 public class Server {
-    private static Map<String,String> capitols = new HashMap<>();
+    private static Map<String,String> capitals = new HashMap<>();
     private static ArrayList<String> countries = new ArrayList<>();
 
-    //add data into map
+    //add data into map and array
     public static void setMap(){
-        capitols = new HashMap<>();
-        capitols.put("Afghanistan", "Kabul");
-        capitols.put("Albania","Tirana");
-        capitols.put("Algeria","Algiers");
-        capitols.put("Andorra","Andorra La Vella");
-        capitols.put("Angola","Luanda");
-        capitols.put("Antigua and Barbuda","Saint John's");
-        capitols.put("Argentina","Buenos Aires");
-        capitols.put("Armenia","Yerevan");
-        capitols.put("Australia","Canberra");
-        capitols.put("Austria","Vienna");
-        capitols.put("Azerbaijan","Baku");
-        capitols.put("Bahamas","Nassau");
-        capitols.put("Bahrain","Manama");
-        capitols.put("Bangladesh","Dhaka");
-        capitols.put("Barbados","Bridgetown");
-        capitols.put("Belarus","Minsk");
-        capitols.put("Belgium","Brussels");
-        capitols.put("Belize","Belmopan");
-        capitols.put("Benin","Porto-Novo");
-        capitols.put("Bhutan","Thimphu");
-        capitols.put("Bolivia","Sucre");
-        capitols.put("Bosnia and Herzegovina","Sarajevo");
-        capitols.put("Botswana","Gaborone");
-        capitols.put("Brazil","Brasilia");
-        capitols.put("Brunei","Bandar Seri Begawan");
-        capitols.put("Bulgaria","Sofia");
-        capitols.put("Burkina Faso","Ouagadougou");
-        capitols.put("Burundi","Gitega");
-        capitols.put("Cabo Verde","Praia");
-        capitols.put("Cambodia","Phnom Penh");
+        capitals = new HashMap<>();
+        capitals.put("Afghanistan", "Kabul");
+        capitals.put("Albania","Tirana");
+        capitals.put("Algeria","Algiers");
+        capitals.put("Andorra","Andorra La Vella");
+        capitals.put("Angola","Luanda");
+        capitals.put("Antigua and Barbuda","Saint John's");
+        capitals.put("Argentina","Buenos Aires");
+        capitals.put("Armenia","Yerevan");
+        capitals.put("Australia","Canberra");
+        capitals.put("Austria","Vienna");
+        capitals.put("Azerbaijan","Baku");
+        capitals.put("Bahamas","Nassau");
+        capitals.put("Bahrain","Manama");
+        capitals.put("Bangladesh","Dhaka");
+        capitals.put("Barbados","Bridgetown");
+        capitals.put("Belarus","Minsk");
+        capitals.put("Belgium","Brussels");
+        capitals.put("Belize","Belmopan");
+        capitals.put("Benin","Porto-Novo");
+        capitals.put("Bhutan","Thimphu");
+        capitals.put("Bolivia","Sucre");
+        capitals.put("Bosnia and Herzegovina","Sarajevo");
+        capitals.put("Botswana","Gaborone");
+        capitals.put("Brazil","Brasilia");
+        capitals.put("Brunei","Bandar Seri Begawan");
+        capitals.put("Bulgaria","Sofia");
+        capitals.put("Burkina Faso","Ouagadougou");
+        capitals.put("Burundi","Gitega");
+        capitals.put("Cabo Verde","Praia");
+        capitals.put("Cambodia","Phnom Penh");
 
         countries.add("Afghanistan");
         countries.add("Albania");
@@ -83,37 +83,35 @@ public class Server {
         countries.add("Cambodia");
     }
 
-    //get the capitol of a given country
-    public static String getCapitol(String country){
-        String capitol = capitols.get(country);;
+    //get the capital of a given country
+    public static String getcapital(String country){
+        String capital = capitals.get(country);;
  
-        if(capitol == null){
-            capitol = "0";
+        if(capital == null){
+            capital = "0";
         }
         
-        return capitol;
+        return capital;
     }
 
-    //generate  random population
+    //generate a random population
     public static String getPopulation(String country){
-        System.out.println("population test " + country);
-        System.out.println(capitols.get(country));
-        if(capitols.get(country) == null){
+        if(capitals.get(country) == null){
             return "0";
         }
         Random rand = new Random();
         int population = 3375851;
         int mulitplier = rand.nextInt(10) + 1;
         population *= mulitplier;
-        System.out.println(population);
         return Integer.toString(population);
     }
     
-    //adds the capitol to the map. 
+    //adds the capital to the map. 
     //returns true if added, false if the country was already there
-    public static boolean addCapitol(String country, String capitol){
-        if(capitols.get(country) == null){
-            capitols.put(country, capitol);
+    public static boolean addcapital(String country, String capital){
+        if(capitals.get(country) == null){
+            capitals.put(country, capital);
+            countries.add(country);
             return true;
         }
         return false;
@@ -123,43 +121,41 @@ public class Server {
         
 
         setMap();
-        //int port = Integer.valueOf(args[0]);
+        //get port number
+        int port = Integer.valueOf(args[0]);
 
         try (
-            //TODO: let port be inputted on command line
-	        ServerSocket ss = new ServerSocket(4500);
+           //connect to the client
+	        ServerSocket ss = new ServerSocket(port);
             Socket s = ss.accept();
             BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
             PrintWriter out = new PrintWriter(s.getOutputStream(), true);
         ) {
-            System.out.println("CONNECTION OPEN");
+            //read msg from client
             String msg = "";
             msg = in.readLine();
+            //wait till the proper message is sent
             while (msg.startsWith("0")|| msg.startsWith("1") || msg.startsWith("2")){
 
-                // Wait till a proper protocol is sent
+                // Output for testing purposes
                 System.out.format("CLIENT: %s\n", msg);
-                //testing
-                System.out.println("msg = " + msg);
-                //split msg and find what function is being called
                 
                 //break up the msg into the function and the input
-                int function = Integer.valueOf(msg.substring(0,1));
-                
+                int function = Integer.valueOf(msg.substring(0,1));                
                 String country = msg.substring(1);
                 
 
-
-                if(function == 0){
+                //complete the requested function
+                if(function == 0){ //get the capital city
                     country = countries.get(Integer.valueOf(country));
-                    String capitol = getCapitol(country);
-                    if(capitol.equals("0")){
+                    String capital = getcapital(country);
+                    if(capital.equals("0")){
                         out.println(0);
                     }else{
-                        out.println(capitol);
+                        out.println(capital);
                     }
                 
-                }else if(function == 1){
+                }else if(function == 1){ //get the population
                     country = countries.get(Integer.valueOf(country));
                     String population = getPopulation(country);
 
@@ -169,15 +165,15 @@ public class Server {
                         out.println(population);
                     }
                     
-                }else if(function == 2){
-                    //spilt the country and the capitol city
+                }else if(function == 2){//add a new country and capital city
+                    //spilt the country and the capital city
                     String msgArr[] = country.split("/");
                     country = msgArr[0];
-                    String capitol = msgArr[1];
+                    String capital = msgArr[1];
                     //add to map
-                    boolean added = addCapitol(country, capitol);
+                    boolean added = addcapital(country, capital);
                     if(added){
-                        countries.add(capitol);
+                        countries.add(capital);
                         out.println(1);
                     }else{
                         out.println(0);
@@ -187,7 +183,7 @@ public class Server {
                     out.println("Error 404");
                 }
                 msg = in.readLine();
-                if(msg == null){
+                if(msg == null){//check if the client has ended
                     break;
                 }
             }
